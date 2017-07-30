@@ -1,45 +1,41 @@
 LIBRARY XpressNet_acc.dll
-EXPORTS  
-   SaveConfig          @1
-   LoadConfig          @2
-   SetLogLevel         @3
-   GetLogLevel         @4
-   ShowConfigDialog    @5
-   HideConfigDialog    @6
-   Open                @7
-   OpenDevice          @8
-   Close               @9
-   Opened              @10
-   Start               @11
-   Stop                @12
-   Started             @13
-   GetInput            @14
-   GetOutput           @15
-   SetOutput           @16
-   GetDeviceCount      @17
-   GetDeviceSerial     @18
-   IsModule            @19
-   IsModuleFailure     @20
-   GetModuleCount      @21
-   GetModuleType       @22
-   GetModuleName       @23
-   GetModuleFW         @24
-   GetDeviceVersion    @25
-   GetDriverVersion    @26
-   
-   BindBeforeOpen      @30
-   BindAfterOpen       @31
-   BindBeforeClose     @32
-   BindAfterClose      @33
-   BindBeforeStart     @34
-   BindAfterStart      @35
-   BindBeforeStop      @36
-   BindAfterStop       @37
-   BindOnError         @38
-   BindOnLog           @39
-   BindOnInputChanged  @40
-   BindOnOutputChanged @41
-   BindOnScanned       @42
-   
-   
-   
+EXPORTS
+   BindAfterClose      @39
+   BindAfterOpen       @1
+   BindAfterStart      @2
+   BindAfterStop       @3
+   BindBeforeClose     @4
+   BindBeforeOpen      @5
+   BindBeforeStart     @6
+   BindBeforeStop      @7
+   BindOnError         @8
+   BindOnInputChanged  @9
+   BindOnLog           @10
+   BindOnOutputChanged @11
+   BindOnScanned       @12
+   Close               @13
+   GetDeviceCount      @14
+   GetDeviceSerial     @15
+   GetDeviceVersion    @16
+   GetDriverVersion    @17
+   GetInput            @18
+   GetLogLevel         @19
+   GetModuleCount      @20
+   GetModuleFW         @21
+   GetModuleName       @22
+   GetModuleType       @23
+   GetOutput           @24
+   HideConfigDialog    @25
+   IsModule            @26
+   IsModuleFailure     @27
+   LoadConfig          @28
+   Open                @29
+   OpenDevice          @30
+   Opened              @31
+   SaveConfig          @32
+   SetLogLevel         @33
+   SetOutput           @34
+   ShowConfigDialog    @35
+   Start               @36
+   Started             @37
+   Stop                @38

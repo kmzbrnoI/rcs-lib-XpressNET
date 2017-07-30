@@ -1,0 +1,46 @@
+[Config]
+Compilator.FileName=go.cmd
+Compilator.DefaultDir=%Dir%
+Compilator.SaveAll=0
+Compilator.Capture=1
+Compilator.HideOutput=0
+Compilator.LogType=0
+DefaultCPIndex=0
+LogtoEnd=1
+DontOpen=0
+AbsolutePath=0
+FileFormat=0
+ProjectFilesOnly=0
+[Project tree]
+XpressNET_acc
+	+make
+		Makefile
+	+def
+		XpressNET_acc.def
+	+src
+		XpressNET_acc.h
+		XpressNET_acc.c
+		LibraryEvents.h
+		LibraryEvents.c
+		ini.h
+		ini.c
+[Open project files]
+0=XpressNET_acc.c
+1=XpressNET_acc.h
+2=LibraryEvents.c
+[Selected Project Files]
+Main=
+Selected=XpressNET_acc.c
+[XpressNET_acc.c]
+TopLine=28
+Caret=10,45
+BookMark2=31,277
+BookMark3=1,342
+BookMark4=31,404
+BookMark9=14,18
+[XpressNET_acc.h]
+TopLine=1
+Caret=5,24
+[LibraryEvents.c]
+TopLine=1
+Caret=23,7

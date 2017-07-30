@@ -18,12 +18,7 @@ extern "C" {
 }
 #endif
 
-typedef void (__stdcall *TStdNotifyEvent)(void *Sender, void *data);
-typedef void (__stdcall *TStdLogEvent)(void *Sender, void *data, char *msg);
-typedef void (__stdcall *TStdErrorEvent)(void *Sender, void *data, unsigned short int errValue, unsigned char errAddr, char *errMsg);
-typedef void (__stdcall *TStdModuleChangeEvent)(void *Sender, void *data, unsigned char module);
-
-typedef int bool;
+typedef int bool; // C do not know bool
 
 //function LoadConfig(filename:PChar):Integer 
 int __stdcall XPRESSNET_LIB LoadConfig(char* filename);
@@ -101,19 +96,19 @@ TStdErrorEvent = procedure (Sender: TObject; data:Pointer; errValue: word; errAd
 TStdModuleChangeEvent = procedure (Sender: TObject; data:Pointer; module: byte); stdcall;
 */
 
-void __stdcall XPRESSNET_LIB BindBeforeOpen(TStdNotifyEvent *event, void *Pointer);
-void __stdcall XPRESSNET_LIB BindAfterOpen(TStdNotifyEvent *event, void *Pointer);
-void __stdcall XPRESSNET_LIB BindBeforeClose(TStdNotifyEvent *event, void *Pointer);
-void __stdcall XPRESSNET_LIB BindAfterClose(TStdNotifyEvent *event, void *Pointer);
-void __stdcall XPRESSNET_LIB BindBeforeStart(TStdNotifyEvent *event, void *Pointer);
-void __stdcall XPRESSNET_LIB BindAfterStart(TStdNotifyEvent *event, void *Pointer);
-void __stdcall XPRESSNET_LIB BindBeforeStop(TStdNotifyEvent *event, void *Pointer);
-void __stdcall XPRESSNET_LIB BindAfterStop(TStdNotifyEvent *event, void *Pointer);
-void __stdcall XPRESSNET_LIB BindOnError(TStdErrorEvent event, void *Pointer);
-void __stdcall XPRESSNET_LIB BindOnLog(TStdLogEvent *event, void *Pointer);
-void __stdcall XPRESSNET_LIB BindOnInputChanged(TStdModuleChangeEvent *event, void *Pointer);
-void __stdcall XPRESSNET_LIB BindOnOutputChanged(TStdModuleChangeEvent *event, void *Pointer);
-void __stdcall XPRESSNET_LIB BindOnScanned(TStdNotifyEvent *event, void *Pointer);
+void __stdcall XPRESSNET_LIB BindBeforeOpen(TStdNotifyEvent *event, void *data);
+void __stdcall XPRESSNET_LIB BindAfterOpen(TStdNotifyEvent *event, void *data);
+void __stdcall XPRESSNET_LIB BindBeforeClose(TStdNotifyEvent *event, void *data);
+void __stdcall XPRESSNET_LIB BindAfterClose(TStdNotifyEvent *event, void *data);
+void __stdcall XPRESSNET_LIB BindBeforeStart(TStdNotifyEvent *event, void *data);
+void __stdcall XPRESSNET_LIB BindAfterStart(TStdNotifyEvent *event, void *data);
+void __stdcall XPRESSNET_LIB BindBeforeStop(TStdNotifyEvent *event, void *data);
+void __stdcall XPRESSNET_LIB BindAfterStop(TStdNotifyEvent *event, void *data);
+void __stdcall XPRESSNET_LIB BindOnError(TStdErrorEvent event, void *data);
+void __stdcall XPRESSNET_LIB BindOnLog(TStdLogEvent *event, void *data);
+void __stdcall XPRESSNET_LIB BindOnInputChanged(TStdModuleChangeEvent *event, void *data);
+void __stdcall XPRESSNET_LIB BindOnOutputChanged(TStdModuleChangeEvent *event, void *data);
+void __stdcall XPRESSNET_LIB BindOnScanned(TStdNotifyEvent *event, void *data);
 
 
 
