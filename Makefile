@@ -1,24 +1,33 @@
-all:	XpressNET_acc.dll
+﻿# Declaration of variables
+CC = c:\MinGW\mingw32\bin\gcc.exe 
+CC_FLAGS = -pipe -fPIC -fno-keep-inline-dllexport -O2 -w -DUNICODE -DXPRESSNET_ACC_LIBRARY -I.
+#CC_FFLAGS = -shared -Wl,--enable-stdcall-fixup -Wl,-s
+CC_FFLAGS = -shared -Wl,--enable-stdcall-fixup -municode
 
-LibraryEvents.o:
-	gcc -c -pipe -fPIC -fno-keep-inline-dllexport -O2 -w -DUNICODE -DXPRESSNET_ACC_LIBRARY -I. -IF:/Qt/5.8/mingw53_32/include  -o LibraryEvents.o LibraryEvents.c
+# File names
+EXEC = XpressNET_acc.dll
+SOURCES = $(wildcard *.c)
+OBJECTS = $(SOURCES:.c=.o)
+DEF     = $(EXEC:.dll=.def)
 
-XpressNET_acc.o:
-	gcc -c -pipe -fPIC -fno-keep-inline-dllexport -O2 -w -DUNICODE -DXPRESSNET_ACC_LIBRARY -I. -IF:/Qt/5.8/mingw53_32/include  -o XpressNET_acc.o XpressNET_acc.c
+# Main target
+$(EXEC): $(OBJECTS)
+	$(CC) $(CC_FFLAGS) $(OBJECTS) $(DEF) -o $(EXEC)
 
-ini.o:
-	gcc -c -pipe -fPIC -fno-keep-inline-dllexport -O2 -w -DUNICODE -DXPRESSNET_ACC_LIBRARY -I. -IF:/Qt/5.8/mingw53_32/include  -o ini.o ini.c
+# To obtain object files
+%.o: %.c
+	$(CC) -c $(CC_FLAGS) -o $@ $<
 
-ConfigDialog.o:
-	gcc -c -pipe -fPIC -fno-keep-inline-dllexport -O2 -w -DUNICODE -DXPRESSNET_ACC_LIBRARY -I. -IF:/Qt/5.8/mingw53_32/include  -o ConfigDialog.o ConfigDialog.c
-
-XpressNET_acc.dll: XpressNET_acc.o LibraryEvents.o ini.o ConfigDialog.o
-	gcc   -shared -Wl,--enable-stdcall-fixup -Wl,-s --enable-stdcall-fixup -o XpressNET_acc.dll XpressNET_acc.o LibraryEvents.o ini.o ConfigDialog.o XpressNET_acc.def
-
+# To remove generated files
 clean:
-	rm -f *.o xpressNET_acc.dll
+	rm -f $(EXEC) $(OBJECTS)
 
-#install:	all
-#	cp XpressNET_acc.dll D:/Michal/prog/Delphi2009/hJOP/server/rcs/
+# force rebuild
+rebuild: clean all
+
+all: $(EXEC)
+
+install: $(EXEC)
+	cp XpressNET_acc.dll D:/Michal/prog/Delphi2009/hJOP/server/rcs/
 
 # @rem -Wall -Wextra

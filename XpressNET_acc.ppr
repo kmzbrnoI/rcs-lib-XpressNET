@@ -1,18 +1,26 @@
 [Config]
-Compilator.FileName=go.cmd
+Compilator.FileName=C:\cygwin64\bin\make.exe
+Compilator.PSPar=D:\Michal\prog\C\Git\rcs-lib-XpressNET\Makefile all install
 Compilator.DefaultDir=%Dir%
 Compilator.SaveAll=0
 Compilator.Capture=1
+Compilator.ParsLog=%F:%L:%C:%E
 Compilator.HideOutput=0
+Compilator.ProgSaveAll=0
+Compilator.ProgRunSelection=0
 Compilator.LogType=0
-DefaultCPIndex=0
+DefaultCPIndex=1
 LogtoEnd=1
 DontOpen=0
 AbsolutePath=0
 FileFormat=0
 ProjectFilesOnly=0
+HTServer=localhost
+Extensions=*.c;*.h
 [Project tree]
 XpressNET_acc
+	+cfg
+		XpressNET_acc.ini
 	+make
 		Makefile
 	+def
@@ -24,23 +32,81 @@ XpressNET_acc
 		LibraryEvents.c
 		ini.h
 		ini.c
+		XpressNET.c
+		XpressNET.h
+		rs232.h
+		rs232.c
+		Serialport.c
+		Serialport.h
+		config.c
+		config.h
 [Open project files]
 0=XpressNET_acc.c
 1=XpressNET_acc.h
 2=LibraryEvents.c
+3=XpressNET.c
+4=XpressNET.h
+5=Serialport.c
+6=Serialport.h
+7=rs232.c
+8=rs232.h
+9=Makefile
+10=ini.c
+11=ini.h
+12=config.c
+13=config.h
+14=LibraryEvents.h
 [Selected Project Files]
 Main=
-Selected=XpressNET_acc.c
+Selected=XpressNET.c
 [XpressNET_acc.c]
-TopLine=28
-Caret=10,45
-BookMark2=31,277
-BookMark3=1,342
-BookMark4=31,404
-BookMark9=14,18
+TopLine=142
+Caret=1,154
+BookMark1=11,157
+BookMark2=31,237
+BookMark3=1,302
+BookMark4=31,364
+BookMark9=14,26
 [XpressNET_acc.h]
-TopLine=1
-Caret=5,24
+TopLine=4
+Caret=22,4
 [LibraryEvents.c]
 TopLine=1
-Caret=23,7
+Caret=30,4
+[XpressNET.c]
+TopLine=11
+Caret=1,13
+[XpressNET.h]
+TopLine=1
+Caret=5,4
+[Serialport.c]
+TopLine=4
+Caret=33,45
+[Serialport.h]
+TopLine=1
+Caret=8,7
+[rs232.c]
+TopLine=22
+Caret=38,25
+[rs232.h]
+TopLine=36
+Caret=29,64
+[Makefile]
+TopLine=1
+Caret=57,5
+[ini.c]
+TopLine=255
+Caret=62,284
+[ini.h]
+TopLine=46
+Caret=77,72
+[config.c]
+TopLine=1
+Caret=4,35
+BookMark1=28,60
+[config.h]
+TopLine=1
+Caret=9,18
+[LibraryEvents.h]
+TopLine=15
+Caret=1,34

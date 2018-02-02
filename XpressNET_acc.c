@@ -1,4 +1,4 @@
-/*********************************************************
+ï»¿/*********************************************************
 *  XpressNET libraly for Accesories                      *
 *   usable witch hJOP software                           *
 *                                                        *
@@ -6,24 +6,26 @@
 *********************************************************/
 
 #include <Windows.h>
+//#include <wchar.h>
+#include <tchar.h>
+
+#define _UNICODE
+#define UNICODE
+
 
 #include "errors.h"
+#include "config.h"
 #include "LibraryEvents.h"
 #include "XpressNet_acc.h"
-#include "ConfigDialog.h"
-#include "ini.h"
+#include "XpressNet.h"
+/*#include "ConfigDialog.h"*/
+
 
 int g_initialized = 0;
 unsigned int g_loglevel = 0;
 int g_started = 0;
 int g_opened = 0;
 HANDLE g_ConfigThread;
-
-struct Tconfig {
-  WCHAR portname[32];
-  int baudspeed;
-  // add custom config variables
-} g_config = { L"", 0 };
 
 union Tout {
   unsigned short int bytes[128];
@@ -45,30 +47,18 @@ BOOL WINAPI DllMain(
     LPVOID lpReserved )  // reserved
 {
   // init
+  cfg_load();
+  //MessageBoxA(NULL, data, "loaded cfg", MB_OK);
   
   // test outpus status reading
-  outs.bits[5].out2 = 1;
-  g_ConfigThread = CreateThread(NULL, 0, ConfigThreadFunc, NULL, 0, NULL);
+  //outs.bits[5].out2 = 1;
+  
+  int i,j;
+  
+  for(i=0; i<6; i++) {
+      outs.bytes[i] = (cfg->port_name[i]);
+  }
   return 1; // Success
-}
-
-
-// ini config parser handler
-static int inihandler(void* user, const char* section, const char* name,
-                   const char* value)
-{
-    struct Tconfig *pconfig = (struct Tconfig*)user;
-
-    #define MATCH(s, n) strcmp(section, s) == 0 && strcmp(name, n) == 0
-    if (MATCH("second_li", "port")) {
-        wcscpy(pconfig->portname, value);
-    } else if (MATCH("second_li", "baud")) {
-        pconfig->baudspeed = atoi(value);
-    // add custom config parsers
-    } else {
-        return 0;  /* unknown section/name, error */
-    }
-    return 1;
 }
 
 //function LoadConfig(filename:PChar):Integer
@@ -76,54 +66,12 @@ int __stdcall XPRESSNET_LIB LoadConfig(char* filename)
 {
   // if opened, shall not pass
   if (g_opened) return MTB_FILE_DEVICE_OPENED;
-/*
-  HANDLE i;
-  unsigned char confdata_raw[1024];
-  i = CreateFileA(filename,
-                 GENERIC_WRITE,           // open for writing
-                 FILE_SHARE_READ,        // allow other readers
-                 NULL,                   // default security
-                 CREATE_NEW,             // create new file only
-                 FILE_ATTRIBUTE_NORMAL,  // normal file
-                 NULL);                  // no attr. template
-  if (i == INVALID_HANDLE_VALUE) {
-    // some error with config file
-    return MTB_FILE_CANNOT_ACCESS;
-  }
-  // ToDo - read config
-  
-  // ToDo - parse config
-  if (ini_parse_string(buf, inihandler, &g_config) < 0) {
-    // error
-    return MTB_FILE_CANNOT_ACCESS;
-  }
-  
-  CloseHandle(i);
-*/  
-  
-  
-  return 0;
+  return MTB_FILE_CANNOT_ACCESS;
+/*  return 0;*/
 }
 
 int __stdcall XPRESSNET_LIB SaveConfig(char* filename)
 {
-  HANDLE i;
-  WCHAR buf = L"test\n";
-  
-  i = CreateFileW(L"out.ini",
-                 GENERIC_WRITE,          // open for writing
-                 0,                      // do not share
-                 NULL,                   // default security
-                 CREATE_NEW,             // create new file only
-                 FILE_ATTRIBUTE_NORMAL,  // normal file
-                 NULL);                  // no attr. template
-  WriteFile(i,
-            buf,
-            10,     // DWORD        nNumberOfBytesToWrite,
-            NULL,   // LPDWORD      lpNumberOfBytesWritten,
-            NULL    // LPOVERLAPPED lpOverlapped
-  );
-  CloseHandle(i);
   return -1;
 }
 
@@ -144,7 +92,9 @@ unsigned int __stdcall XPRESSNET_LIB GetLogLevel(void)
 void __stdcall XPRESSNET_LIB ShowConfigDialog()
 {
   HANDLE i;
-  MessageBoxA(NULL, "XpressNET nemá žádné interaktivní nastavení,\nvše je v souboru \\rcs\\XpressNET.ini", "Není nastavení", MB_OK);
+  wchar_t ggg[128] = u"";
+  wsprintf(ggg, u"XpressNET nemÃ¡ Å¾Ã¡dnÃ© interaktivnÃ­ nastavenÃ­,\nvÅ¡e je v souboru \\rcs\\XpressNET.ini\n\nCOM: %s, baud: %d", cfg->port_name, cfg->port_baud);
+  MessageBoxW(NULL, ggg, u"RCS - XpressNET", MB_OK);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -156,6 +106,7 @@ void __stdcall XPRESSNET_LIB HideConfigDialog()
 
 int __stdcall XPRESSNET_LIB OpenDevice(char *device, bool persist)
 {
+  xpn_init();
   return 0;
 }
 
@@ -182,21 +133,28 @@ void __stdcall XPRESSNET_LIB GetDriverVersion(char *version, unsigned int versio
 bool __stdcall XPRESSNET_LIB IsModule(unsigned int module)
 {
   if (module < 128) {
-    return -1;
+    if (cfg->busi.mod[module].active) {
+      return -1;
+     } else {
+      return 0;  
+    }
    } else {
     return 0;      
   }
 }
 
 unsigned int __stdcall XPRESSNET_LIB GetModuleCount(void) {
-  return 128;
+  return cfg->busi.module_count;
 }
 
 int __stdcall XPRESSNET_LIB GetModuleName(unsigned int module, char *name, unsigned int nameLen)
 {
+  //int i;
   //
   if (module < 128) {
-    wcscpy(name, L"RS-module");  
+    //i = strlen(cfg->busi.mod[module].name);
+    //mbstowcs(name, cfg->busi.mod[module].name, i);
+    wcscpy(name, cfg->busi.mod[module].name);
    } else {
     name[0] = 0;
     name[1] = 0; 
@@ -206,9 +164,11 @@ int __stdcall XPRESSNET_LIB GetModuleName(unsigned int module, char *name, unsig
 
 int __stdcall XPRESSNET_LIB GetModuleFW(unsigned int module, char *fw, unsigned int fwLen)
 {
+  int i;
   //
   if (module < 128) {
-    wcscpy(fw, L"N/A");  
+    //i = strlen(cfg->busi.mod[module].name);
+    wcscpy(fw, cfg->busi.mod[module].name);
    } else {
     wcscpy(fw, L""); 
   }
@@ -238,7 +198,7 @@ int __stdcall XPRESSNET_LIB Close()
 {
 //
   if (!g_opened) return MTB_NOT_OPENED;
-  // return MTB_SCANNING_NOT_FINISHED  // nikdy nemùže nastat
+  // return MTB_SCANNING_NOT_FINISHED  // nikdy nemÅ¯Å¾e nastat
   if (LibEvents.BeforeClose.event != NULL) LibEvents.BeforeClose.event(NULL, LibEvents.BeforeClose.data);
   //
   // ToDo: close serial port
@@ -447,16 +407,3 @@ void __stdcall XPRESSNET_LIB BindOnScanned(TStdNotifyEvent *event, void *data)
   LibEvents.OnScanned.event = event;
 }
 
-/*
-TXpressNET::TXpressNET()
-{
-  ;
- 
-}
-
-TXpressNET::~TXpressNET()
-{
-  ;
- 
-}
-*/

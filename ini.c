@@ -1,4 +1,4 @@
-/* inih -- simple .INI file parser
+﻿/* inih -- simple .INI file parser
 
 inih is released under the New BSD license (see LICENSE.txt). Go to the project
 home page for more info:
@@ -11,15 +11,8 @@ https://github.com/benhoyt/inih
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include <stdio.h>
-#include <ctype.h>
-#include <string.h>
-
+#include <windows.h>
 #include "ini.h"
-
-#if !INI_USE_STACK
-#include <stdlib.h>
-#endif
 
 #define MAX_SECTION 50
 #define MAX_NAME 50
@@ -74,11 +67,138 @@ static char* strncpy0(char* dest, const char* src, size_t size)
     dest[size - 1] = '\0';
     return dest;
 }
+/* get next line from input data */
+static int reader(char *line, char*data, int data_len)
+{
+	static int pos = 0;
+	int lpos = 0;
+	//static char line[1024];
+	if (pos >= data_len) return NULL;
+	while ((pos < data_len) && (data[pos] != 0x0D)) {
+		line[lpos++] = data[pos++];
+	}
+  pos++;
+  pos++;
+  line[lpos] = 0;
+  
+  return lpos;
+}
+
+/**************************************************************/
+/**************************************************************/
+
+ini_handler handler; /* pointer to handler function */
+char *data = NULL; /* file buffer */
+int data_len; /* length of file */
+char line[INI_MAX_LINE];  /* line buffer */
+HANDLE hheap;  /* process heap handle */
+HANDLE hfile; /* file handle */
+
+int ini_set_handler(ini_handler hnd)
+{
+	handler = hnd;
+	return 0;
+}
+
+int ini_read(char *filename)
+{
+	ini_data_init();
+	ini_load(filename);
+	//MessageBoxA(NULL, "soubor načten", "last error", MB_OK);
+	ini_parse();
+	//MessageBoxA(NULL, "soubor zpracován", "last error", MB_OK);
+	ini_data_destroy();
+	//
+}
+
+int ini_data_init(void)
+{
+	/* initialize buffers */
+	hheap = GetProcessHeap();
+  if (hheap == NULL) return -2;
+  data = HeapAlloc(hheap, HEAP_ZERO_MEMORY, INI_MAX_SIZE);
+  if (data == NULL) return -3;
+}
+
+void ini_data_destroy(void)
+{
+	HeapFree(hheap, 0, (LPVOID) data);
+}
+
+int ini_load(char *filename)
+{
+const char data_default = 
+	"[generic]\n"
+	"testmode=0\n"
+	"[serial]\n"
+	"port=4\n"
+	"baud=115200\n"
+	"[rcs]\n"
+	"allvisible=0\n"
+	"modules=1,3,4,5\n"
+	"\n";
+	/* load file to RAM */
+  //MessageBoxA(NULL, "open cfg file", "debug", MB_OK);
+  hfile = CreateFileW(u"rcs\\XpressNET_acc.ini",
+                      GENERIC_READ,          // open for writing
+                      FILE_SHARE_READ | FILE_SHARE_WRITE,                      // do not share
+                      NULL,                   // default security
+                      OPEN_ALWAYS,            // ...
+                      FILE_ATTRIBUTE_NORMAL,  // normal file
+                      NULL);                  // no attr. template
+  if (hfile == INVALID_HANDLE_VALUE) {
+  	MessageBoxW(NULL, u"nejde otevřít (ani vytvořit) soubor s konfigurací", u"error", MB_OK);
+	  return -1;
+	}
+  
+		char dbgg[22];
+		int gg;
+		gg = GetLastError();
+//	  itoa(dbgg, gg, 10);                      
+//    MessageBoxA(NULL, dbgg, "last error", MB_OK);   
+
+
+
+  /*if (GetLastError() == 0) {*/
+  if (gg == 0) {
+		/* config file don't exist */
+		/* write default */
+		WriteFile(hfile,
+		          data_default,
+							sizeof(data_default),
+							&gg,
+							NULL);
+							
+	  /*itoa(hfile, dbgg, gg);*/                      
+    /*MessageBoxA(NULL, "default config created.", "debug", MB_OK);*/
+	}
+  
+  /*MessageBoxA(NULL, data, "ready to load cfg", MB_OK);*/
+  ReadFile(hfile,
+           data,
+           INI_MAX_SIZE,  // DWORD        nNumberOfBytesToRead,
+           &data_len,     // LPDWORD      lpNumberOfBytesReaded,
+           NULL           // LPOVERLAPPED lpOverlapped
+  );
+  
+  //data_len = INI_MAX_SIZE;
+  /*
+  char fff[64];
+  for(int i = 0; i<7; i++) { 
+    fff[i] = ((data_len >> ((7-i)*4)) & 0x000f); fff[i] += (fff[i] > 9) ? 'A'-10 : '0';
+  }
+  fff[8] = 0;
+  fff[9] = 0;
+  MessageBoxA(NULL, fff, "loaded cfg", MB_OK);
+  */
+  CloseHandle(hfile);
+  return 0;
+}
 
 /* See documentation in header file. */
-int ini_parse_stream(ini_reader reader, void* stream, ini_handler handler,
-                     void* user)
+int ini_parse()
 {
+	void *user = NULL;
     /* Uses a fair bit of stack (use heap instead if you need to) */
 #if INI_USE_STACK
     char line[INI_MAX_LINE];
@@ -102,17 +222,14 @@ int ini_parse_stream(ini_reader reader, void* stream, ini_handler handler,
     }
 #endif
 
-#if INI_HANDLER_LINENO
-#define HANDLER(u, s, n, v) handler(u, s, n, v, lineno)
-#else
 #define HANDLER(u, s, n, v) handler(u, s, n, v)
-#endif
 
     /* Scan through stream line by line */
-    while (reader(line, INI_MAX_LINE, stream) != NULL) {
+    while (reader(line, data, data_len) != NULL) {
         lineno++;
 
         start = line;
+        /*
 #if INI_ALLOW_BOM
         if (lineno == 1 && (unsigned char)start[0] == 0xEF &&
                            (unsigned char)start[1] == 0xBB &&
@@ -120,8 +237,9 @@ int ini_parse_stream(ini_reader reader, void* stream, ini_handler handler,
             start += 3;
         }
 #endif
+*/
         start = lskip(rstrip(start));
-
+        
         if (*start == ';' || *start == '#') {
             /* Per Python configparser, allow both ; and # comments at the
                start of a line */
@@ -186,59 +304,3 @@ int ini_parse_stream(ini_reader reader, void* stream, ini_handler handler,
     return error;
 }
 
-/* See documentation in header file. */
-int ini_parse_file(FILE* file, ini_handler handler, void* user)
-{
-    return ini_parse_stream((ini_reader)fgets, file, handler, user);
-}
-
-/* See documentation in header file. */
-int ini_parse(const char* filename, ini_handler handler, void* user)
-{
-    FILE* file;
-    int error;
-
-    file = fopen(filename, "r");
-    if (!file)
-        return -1;
-    error = ini_parse_file(file, handler, user);
-    fclose(file);
-    return error;
-}
-
-/* An ini_reader function to read the next line from a string buffer. This
-   is the fgets() equivalent used by ini_parse_string(). */
-static char* ini_reader_string(char* str, int num, void* stream) {
-    ini_parse_string_ctx* ctx = (ini_parse_string_ctx*)stream;
-    const char* ctx_ptr = ctx->ptr;
-    size_t ctx_num_left = ctx->num_left;
-    char* strp = str;
-    char c;
-
-    if (ctx_num_left == 0 || num < 2)
-        return NULL;
-
-    while (num > 1 && ctx_num_left != 0) {
-        c = *ctx_ptr++;
-        ctx_num_left--;
-        *strp++ = c;
-        if (c == '\n')
-            break;
-        num--;
-    }
-
-    *strp = '\0';
-    ctx->ptr = ctx_ptr;
-    ctx->num_left = ctx_num_left;
-    return str;
-}
-
-/* See documentation in header file. */
-int ini_parse_string(const char* string, ini_handler handler, void* user) {
-    ini_parse_string_ctx ctx;
-
-    ctx.ptr = string;
-    ctx.num_left = strlen(string);
-    return ini_parse_stream((ini_reader)ini_reader_string, &ctx, handler,
-                            user);
-}

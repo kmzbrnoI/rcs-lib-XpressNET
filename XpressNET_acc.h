@@ -1,21 +1,13 @@
-#ifndef XPRESSNET_LIB_H
+﻿#ifndef XPRESSNET_LIB_H
 #define XPRESSNET_LIB_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
- 
+#include <windows.h> 
 
 #ifdef BUILDING_XPRESSNET_LIB
 //#define XPRESSNET_LIB __declspec(dllexport)
 #define XPRESSNET_LIB
 #else
 #define XPRESSNET_LIB __declspec(dllimport)
-#endif
-
-#ifdef __cplusplus
-}
 #endif
 
 typedef int bool; // C do not know bool
@@ -110,34 +102,7 @@ void __stdcall XPRESSNET_LIB BindOnInputChanged(TStdModuleChangeEvent *event, vo
 void __stdcall XPRESSNET_LIB BindOnOutputChanged(TStdModuleChangeEvent *event, void *data);
 void __stdcall XPRESSNET_LIB BindOnScanned(TStdNotifyEvent *event, void *data);
 
-
-
-
-
-/*
-class XPRESSNET_LIB TXpressNET
-{
-  public:
-    TXpressNET();
-    ~TXpressNET();
-    void SetLogLevel(unsigned int loglevel);
-};
-*/
-
-// NOTE: this function is not declared extern "C"
-//void XPRESSNET_LIB CppFunc(void);
-
-// NOTE: this class must not be declared extern "C"
-/*
-class XPRESSNET_LIB MyClass
-{
-public:
-        MyClass() {};
-        virtual ~MyClass() {};
-        void func(void);
-};
-*/
-
+HINSTANCE win_hinst;
 
 
 #endif  // XPRESSNET_LIB_H
