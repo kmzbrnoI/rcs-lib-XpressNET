@@ -54,3 +54,8 @@ void sp_send(char *data, int len)
     sp_buf_out_e = (sp_buf_out_e+1) & SP_BUF_SIZE;
   }
 }
+
+int sp_read(char *data)
+{
+  return -1;
+}
