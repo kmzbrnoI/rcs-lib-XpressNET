@@ -277,17 +277,18 @@ int __stdcall XPRESSNET_LIB GetInput(unsigned int module, unsigned int port)
   if (module   > 20)  return MTB_INPUT_NOT_YET_SCANNED;
   // MTB_INPUT_NOT_YET_SCANNED
 
-  ret = ((module + port) % 3) == 0;
+  //ret = ((module + port) % 3) == 0;
+  ret = xpn_inputs[((module << 3) + port)];
   return ret;
 }
 
 int __stdcall XPRESSNET_LIB GetOutput(unsigned int module, unsigned int port)
 {
   if (module > 127) return MTB_MODULE_INVALID_ADDR; //MTB_MODULE_NOT_AVAILABLE;
-  if (port   > 15)   return MTB_PORT_INVALID_NUMBER;
+  if (port   > 15)  return MTB_PORT_INVALID_NUMBER;
   if (port   > 7)   return 0;
-  
-  return (outs.bytes[module] >> port) & 1;
+  return xpn_outputs[((module << 3) + port)];
+  //return (outs.bytes[module] >> port) & 1;
 }
 
 int __stdcall XPRESSNET_LIB SetOutput(unsigned int module, unsigned int port, int state)
@@ -296,11 +297,14 @@ int __stdcall XPRESSNET_LIB SetOutput(unsigned int module, unsigned int port, in
   if (port   > 15)   return MTB_PORT_INVALID_NUMBER;
   if (port   > 7)   return 0;
   
+  xpn_set_output(((module << 3) + port), state);
+  /*
   if (state) {
     outs.bytes[module] |=  (1 << port);
    } else {
     outs.bytes[module] &= ~(1 << port);
   }
+  */
   return 0;
 } 
 

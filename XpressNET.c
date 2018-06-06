@@ -10,10 +10,16 @@
 
 #include "config.h"
 #include "Serialport.h"
+#include "XpressNET.h"
 
 void xpn_init()
 {
   /* */
+  int i;
+  for(i=0; i<1024; i++) {
+    xpn_inputs[i] = 0;
+    xpn_outputs[i] = 0;
+  }
   sp_open(cfg->port_name, cfg->port_baud);
 }
 
@@ -43,10 +49,19 @@ void xpn_set_output(int addr, int out)
 {
   unsigned char data[32];
   
+  // check values
+  if (addr < 0) return;
+  if (addr > 1023) return;
+  out = (out) ? 1 : 0;
+  
+  // send frame
   data[0] = 0x52;
   data[1] = (addr >> 2);
-  data[2] = 0x80 | ((addr & 0x03) << 1) | ((out) ? 1 : 0);
+  data[2] = 0x80 | ((addr & 0x03) << 1) | (out);
   xpn_send(data, 3);
+  
+  // save state
+  xpn_outputs[addr] = out;
 }
 
 

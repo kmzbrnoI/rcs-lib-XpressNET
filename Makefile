@@ -1,5 +1,6 @@
 ﻿# Declaration of variables
-CC = c:\MinGW\mingw32\bin\gcc.exe 
+#CC = c:\MinGW\mingw32\bin\gcc.exe 
+CC = c:\MinGW\i686-8.1.0-posix-dwarf-rt_v6-rev0\mingw32\bin\gcc.exe
 CC_FLAGS = -pipe -fPIC -fno-keep-inline-dllexport -O2 -w -DUNICODE -DXPRESSNET_ACC_LIBRARY -I.
 #CC_FFLAGS = -shared -Wl,--enable-stdcall-fixup -Wl,-s
 CC_FFLAGS = -shared -Wl,--enable-stdcall-fixup -municode
