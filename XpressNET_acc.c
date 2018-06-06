@@ -61,6 +61,19 @@ BOOL WINAPI DllMain(
   return 1; // Success
 }
 
+void usleep(__int64 usec) 
+{ 
+    HANDLE timer; 
+    LARGE_INTEGER ft; 
+
+    ft.QuadPart = -(10*usec); // Convert to 100 nanosecond interval, negative value indicates relative time
+
+    timer = CreateWaitableTimer(NULL, TRUE, NULL); 
+    SetWaitableTimer(timer, &ft, 0, NULL, NULL, 0); 
+    WaitForSingleObject(timer, INFINITE); 
+    CloseHandle(timer); 
+}
+
 //function LoadConfig(filename:PChar):Integer
 int __stdcall XPRESSNET_LIB LoadConfig(char* filename) 
 {
@@ -239,6 +252,10 @@ int __stdcall XPRESSNET_LIB Start()
        LibEvents.OnInputChanged.event(NULL, LibEvents.OnInputChanged.data, i);
     }
   }
+
+  usleep(10);
+  if (LibEvents.OnScanned.event != NULL) LibEvents.OnScanned.event(NULL, LibEvents.OnScanned.data);
+
   
   return 0;
 }
