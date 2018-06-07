@@ -7,7 +7,7 @@
 #define SP_BUF_SIZE (1024)
 
 // public
-int sp_open(char* name, int baud);
+int sp_open(char * name, int baud);
 void sp_close(void);
 void sp_send(char *data, int len);
 

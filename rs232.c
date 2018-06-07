@@ -471,10 +471,10 @@ char mode_str[128];
 
 int RS232_OpenComport(char* comport_name, int baudrate, const char *mode)
 {
-  char comportWinName[64];
+  wchar_t comportWinName[64];
   
-  strcpy (comportWinName, '\\\\.\\');
-  strcat(comportWinName, comport_name);
+  lstrcpy (comportWinName, L"\\\\.\\");
+  lstrcat(comportWinName, comport_name);
  /*
   if((comport_number>23)||(comport_number<0))
   {
@@ -575,7 +575,7 @@ http://msdn.microsoft.com/en-us/library/windows/desktop/aa363145%28v=vs.85%29.as
 http://technet.microsoft.com/en-us/library/cc732236.aspx
 */
 
-  Cport = CreateFileA(comportWinName,
+  Cport = CreateFileW(comportWinName,
                       GENERIC_READ|GENERIC_WRITE,
                       0,                          /* no share  */
                       NULL,                       /* no security */

@@ -42,6 +42,27 @@ int cfg_load(void)
 
 #define MATCH(s, n) ((strcmp(section, s) == 0) && (strcmp(name, n) == 0))
 
+size_t to_narrow(const wchar_t * src, char * dest, size_t dest_len){
+  size_t i;
+  wchar_t code;
+
+  i = 0;
+
+  while (src[i] != '\0' && i < (dest_len - 1)){
+    code = src[i];
+    if (code < 128)
+      dest[i] = (char) code;
+    else{
+      dest[i] = '?';
+      if (code >= 0xD800 && code <= 0xD8FF)
+        // lead surrogate, skip the next code unit, which is the trail
+        i++;
+    }
+    i++;
+  }
+  dest[i] = '\0';
+  return i - 1;
+}
 
 // ini config parser handler
 static int inihandler(void* user, const char* section, const char* name,
@@ -54,7 +75,9 @@ static int inihandler(void* user, const char* section, const char* name,
     if (MATCH("second_li", "port")) {
       int i;
       //mbstowcs(cfg->port_name, value, 32);
+      
       MultiByteToWideChar(CP_ACP, 0, value, -1, cfg->port_name, 32);
+      //to_narrow(str, cfg->port_name, 32);
       return 1;
     }
     //strcpy(cfg->port_name, value);

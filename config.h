@@ -11,6 +11,7 @@ struct smod {
 
 struct scfg {
 	wchar_t port_name[32];
+  //char port_name[32];
 	int port_baud;
   struct sxbus {
     int module_count;

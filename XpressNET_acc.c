@@ -48,7 +48,6 @@ BOOL WINAPI DllMain(
 {
   // init
   cfg_load();
-  //MessageBoxA(NULL, data, "loaded cfg", MB_OK);
   
   // test outpus status reading
   //outs.bits[5].out2 = 1;
@@ -119,7 +118,7 @@ void __stdcall XPRESSNET_LIB HideConfigDialog()
 
 int __stdcall XPRESSNET_LIB OpenDevice(char *device, bool persist)
 {
-  xpn_init();
+  //xpn_init();
   return 0;
 }
 
@@ -200,6 +199,7 @@ int __stdcall XPRESSNET_LIB Open()
   //
   // ToDo: open serial port
   // return MTB_GENERAL_EXCEPTION;
+  xpn_init();
   //
   g_opened = 1;
   if (LibEvents.AfterOpen.event != NULL) LibEvents.AfterOpen.event(NULL, LibEvents.AfterOpen.data);
